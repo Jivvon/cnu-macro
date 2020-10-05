@@ -1,3 +1,4 @@
+# newmacro.py backup
 from newrecognition import Recognition
 import pyautogui as pag
 
@@ -17,12 +18,10 @@ data = {
     "center": (640, 805),
 }
 
-only_mac_monitor = {"submit3": (45, 656), "center": (361, 535)}
-test = {
-    "search": (770, 376),
-    "submit1": (45, 607),
-    "students": (929 * 2, 597 * 2, 26 * 2, 14 * 2),
-    "center": (510, 535)
+search = {
+    "search": (983, 376),
+    "submit1": (264, 760),
+    "students": (1140, 749, 1174, 767),
 }
 
 # 과목명 검색
@@ -36,25 +35,21 @@ def init():
 # 신청 버튼 누르기
 def press_submit():
     print("submit")
-    # pag.click(data['submit'])
-    # pag.click(only_mac_monitor["submit3"])
-    pag.click(test["submit1"])
+    pag.click(data["submit"])
 
 
 # 매크로방지입력숫자 위치 찾기
 def find_window():
-    # location = pag.locateOnScreen('window_top.png', grayscale=True, confidence=.95)
-    location = pag.locateOnScreen(
-        "window_left_macmonitor.png", grayscale=True, confidence=0.95
-    )
+    location = pag.locateOnScreen("window_top.png", grayscale=True, confidence=0.95)
+    # location = pag.locateOnScreen('window_left.png', grayscale=True, confidence=.95)
     # pag.screenshot('find_window.png',region=location)
     print(location)
     try:
         window_x, window_y, _, _ = location
-        x1 = window_x + (132) * 2
-        y1 = window_y + (72 - 25) * 2 + 1
-        x2 = x1 + 77 * 2
-        y2 = y1 + 33 * 2
+        x1 = window_x + 133
+        y1 = window_y + 71 - 25
+        x2 = x1 + 77
+        y2 = y1 + 35
         return (x1, y1, x2, y2)
     except Exception:
         return None
@@ -68,12 +63,9 @@ def save_number(number):
 
 
 def pass_error():
-    # pag.click(data['center'])
-    # pag.click(data['center'])
-    # pag.click(data['center'])
-    pag.click(only_mac_monitor["center"])
-    pag.click(only_mac_monitor["center"])
-    pag.click(only_mac_monitor["center"])
+    pag.click(data["center"])
+    pag.click(data["center"])
+    pag.click(data["center"])
 
 
 def pass_number():
@@ -114,29 +106,27 @@ def run():
         save_number(number)  # 숫자타이핑 하고 저장
         prevNumber = number
         pag.sleep(0.2)
-    pag.click(test["center"])
-    pag.click(test["center"])
+    pass_error()
 
 
 if __name__ == "__main__":
     pag.click(352, 140)  # 활성화
-    x, y, w, h = test["students"]
     while True:
-        recognition = Recognition((x, y, x + w, y + h), "screenshot.png")  # OCR
+        recognition = Recognition(search["students"], "screenshot.png")  # OCR
         recognition.grab_image()  # 숫자 캡처하고
         number = recognition.ocr()  # 숫자 읽어낸다
         print(number)
         try:
-            if int(number) < 100:
+            if int(number) < 81:
                 run()
             else:
-                pag.click(test["search"])
                 pag.press("enter")
+                pag.click(search["search"])
                 pag.sleep(0.4)
         except:
             print("!ERROR")
             run()
-            pag.click(test["search"])
+            pag.click(search["search"])
             pag.press("enter")
             pag.sleep(0.5)
 
